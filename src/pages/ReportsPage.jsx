@@ -1,0 +1,7 @@
+import { useEffect, useState } from 'react'
+import { FileText } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { reportApi } from '../services/api'
+import { useLanguage } from '../i18n'
+
+export default function ReportsPage() { const { t, language } = useLanguage(); const [reports, setReports] = useState([]); const [error, setError] = useState(''); useEffect(() => { reportApi.list().then((response) => setReports(response.data)).catch((requestError) => setError(requestError.message)) }, []); return <><header className="page-header"><div><p className="section-kicker">{t('navigation.reports')} / 05</p><h1>{t('reports.title')}</h1><p className="page-copy">{t('reports.copy')}</p></div></header>{error && <div className="form-error" role="alert">{error}</div>}{reports.length ? <section className="reports-list">{reports.map((report) => <Link className="surface report-row" to={`/reports/${report.id}`} key={report.id}><span className="report-icon"><FileText size={17} /></span><span><strong>{report.title}</strong><small>Analysis #{report.analysis_id} · {new Date(report.created_at).toLocaleString(language)}</small></span><span className="report-format">{report.format.toUpperCase()} →</span></Link>)}</section> : <section className="surface report-empty"><span className="report-symbol">▤</span><h2>{t('reports.empty')}</h2><p>{t('reports.emptyCopy')}</p><Link className="outline-button" to="/history">{t('reports.openHistory')}</Link></section>}</> }
